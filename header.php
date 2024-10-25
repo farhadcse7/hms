@@ -1,3 +1,9 @@
+<?php
+ob_start();
+session_start();
+require_once('admin/db.php');
+?>
+
 <!DOCTYPE HTML>
 <html>
 

@@ -1,72 +1,54 @@
-<?php require_once('header.php');  ?>
+<?php require_once('header.php'); ?>
 
 <!-- Revolution Slider -->
 <section class="revolution-slider">
   <div class="bannercontainer">
     <div class="banner">
       <ul>
-        <!-- Slide 1 -->
-        <li data-transition="fade" data-slotamount="7" data-masterspeed="1500" > 
-          <!-- Main Image --> 
-          <img src="images/slides/slide-bg.jpg" style="opacity:0;" alt="slidebg1"  data-bgfit="cover" data-bgposition="left bottom" data-bgrepeat="no-repeat"> 
-          <!-- Layers -->           
-          <!-- Layer 1 -->
-          <div class="caption sft revolution-starhotel bigtext"  
-          				data-x="505" 
-                        data-y="30" 
-                        data-speed="700" 
-                        data-start="1700" 
-                        data-easing="easeOutBack"> 
-						<span><i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i></span> A Five Star Hotel <span><i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i></span></div>
-          <!-- Layer 2 -->
-          <div class="caption sft revolution-starhotel smalltext"  
-          				data-x="605" 
-                        data-y="105" 
-                        data-speed="800" 
-                        data-start="1700" 
-                        data-easing="easeOutBack">
-						<span>And we like to keep it that way!</span></div>
-        <!-- Layer 3 -->
-                  <div class="caption sft"  
-          				data-x="775" 
-                        data-y="175" 
-                        data-speed="1000" 
-                        data-start="1900" 
-                        data-easing="easeOutBack">
-						<a href="room-list.html" class="button btn btn-purple btn-lg">See rooms</a> 
-                  </div>
-        </li>
-		<!-- Slide 2 -->
-        <li data-transition="boxfade" data-slotamount="7" data-masterspeed="1000" > 
-          <!-- Main Image --> 
-          <img src="images/slides/slide-bg-02.jpg"  alt="darkblurbg"  data-bgfit="cover" data-bgposition="left top" data-bgrepeat="no-repeat"> 
-          <!-- Layers -->           
-          <!-- Layer 1 -->
-          <div class="caption sft revolution-starhotel bigtext"  
-          				data-x="585" 
-                        data-y="30" 
-                        data-speed="700" 
-                        data-start="1700" 
-                        data-easing="easeOutBack"> 
-						<span><i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i></span> Double room <span><i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i> <i class="fa fa-star-o"></i></span></div>
-          <!-- Layer 2 -->
-          <div class="caption sft revolution-starhotel smalltext"  
-          				data-x="682" 
-                        data-y="105" 
-                        data-speed="800" 
-                        data-start="1700" 
-                        data-easing="easeOutBack">
-						<span>€ 99,- a night this summer</span></div>
-        <!-- Layer 3 -->
-                  <div class="caption sft"  
-          				data-x="785" 
-                        data-y="175" 
-                        data-speed="1000" 
-                        data-start="1900" 
-                        data-easing="easeOutBack">
-						<a href="room-detail.html" class="button btn btn-purple btn-lg">Book this room</a> 
-                  </div>
-        </li>
+        <?php
+        $q = $pdo->prepare("SELECT * FROM slider ORDER BY slider_id ASC");
+        $q->execute();
+        $res = $q->fetchAll();
+        foreach ($res as $row) {
+        ?>
+          <li data-transition="fade" data-slotamount="7" data-masterspeed="1500">
+
+            <img src="uploads/<?php echo $row['slider_photo']; ?>" style="opacity:0;" alt="slidebg1" data-bgfit="cover" data-bgposition="left bottom" data-bgrepeat="no-repeat">
+
+            <div class="caption sft revolution-starhotel bigtext"
+              data-x="505"
+              data-y="30"
+              data-speed="700"
+              data-start="1700"
+              data-easing="easeOutBack">
+              <span><?php echo $row['slider_title']; ?></span>
+            </div>
+
+            <div class="caption sft revolution-starhotel smalltext"
+              data-x="505"
+              data-y="105"
+              data-speed="800"
+              data-start="1700"
+              data-easing="easeOutBack">
+              <span><?php echo $row['slider_subtitle']; ?></span>
+            </div>
+
+            <?php if ($row['slider_button_text'] != ''): ?>
+              <div class="caption sft"
+                data-x="505"
+                data-y="175"
+                data-speed="1000"
+                data-start="1900"
+                data-easing="easeOutBack">
+                <a href="<?php echo $row['slider_button_url']; ?>" class="button btn btn-purple btn-lg"><?php echo $row['slider_button_text']; ?></a>
+              </div>
+            <?php endif; ?>
+
+          </li>
+        <?php
+        }
+        ?>
+
       </ul>
     </div>
   </div>
@@ -76,15 +58,15 @@
 <section id="reservation-form">
   <div class="container">
     <div class="row">
-      <div class="col-md-12">         
+      <div class="col-md-12">
         <form class="form-inline reservation-horizontal clearfix" role="form" method="post" action="https://www.slashdown.net/starhotel-html/php/reservation.php" name="reservationform" id="reservationform">
-        <!-- Error message -->
-		<div id="message"></div>
+          <!-- Error message -->
+          <div id="message"></div>
           <div class="row">
             <div class="col-sm-3">
               <div class="form-group">
                 <label for="email" accesskey="E">E-mail</label>
-                <input name="email" type="text" id="email" value="" class="form-control" placeholder="Please enter your E-mail"/>
+                <input name="email" type="text" id="email" value="" class="form-control" placeholder="Please enter your E-mail" />
               </div>
             </div>
             <div class="col-sm-2">
@@ -104,7 +86,7 @@
                 <label for="checkin">Check-in</label>
                 <div class="popover-icon" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="right" data-content="Check-In is from 11:00"> <i class="fa fa-info-circle fa-lg"> </i> </div>
                 <i class="fa fa-calendar infield"></i>
-                <input name="checkin" type="text" id="checkin" value="" class="form-control" placeholder="Check-in"/>
+                <input name="checkin" type="text" id="checkin" value="" class="form-control" placeholder="Check-in" />
               </div>
             </div>
             <div class="col-sm-2">
@@ -112,7 +94,7 @@
                 <label for="checkout">Check-out</label>
                 <div class="popover-icon" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="right" data-content="Check-out is from 12:00"> <i class="fa fa-info-circle fa-lg"> </i> </div>
                 <i class="fa fa-calendar infield"></i>
-                <input name="checkout" type="text" id="checkout" value="" class="form-control" placeholder="Check-out"/>
+                <input name="checkout" type="text" id="checkout" value="" class="form-control" placeholder="Check-out" />
               </div>
             </div>
             <div class="col-sm-1">
@@ -172,7 +154,7 @@
               <div class="price">&euro; 99<span>a night</span></div>
             </div>
             <div class="content">
-              <p><span>A modern hotel room in Star Hotel</span> Nunc tempor erat in magna pulvinar fermentum. Pellentesque scelerisque at leo nec vestibulum. 
+              <p><span>A modern hotel room in Star Hotel</span> Nunc tempor erat in magna pulvinar fermentum. Pellentesque scelerisque at leo nec vestibulum.
                 malesuada metus.</p>
               <div class="row">
                 <div class="col-xs-6">
@@ -204,7 +186,7 @@
               <div class="price">&euro; 149<span>a night</span></div>
             </div>
             <div class="content">
-              <p><span>A modern hotel room in Star Hotel</span> Nunc tempor erat in magna pulvinar fermentum. Pellentesque scelerisque at leo nec vestibulum. 
+              <p><span>A modern hotel room in Star Hotel</span> Nunc tempor erat in magna pulvinar fermentum. Pellentesque scelerisque at leo nec vestibulum.
                 malesuada metus.</p>
               <div class="row">
                 <div class="col-xs-6">
@@ -236,7 +218,7 @@
               <div class="price">&euro; 120<span>a night</span></div>
             </div>
             <div class="content">
-              <p><span>A modern hotel room in Star Hotel</span> Nunc tempor erat in magna pulvinar fermentum. Pellentesque scelerisque at leo nec vestibulum. 
+              <p><span>A modern hotel room in Star Hotel</span> Nunc tempor erat in magna pulvinar fermentum. Pellentesque scelerisque at leo nec vestibulum.
                 malesuada metus.</p>
               <div class="row">
                 <div class="col-xs-6">
@@ -268,42 +250,37 @@
   <div class="container">
     <div class="row">
       <div class="col-sm-12">
-        <h2 class="lined-heading"><span>USP section</span></h2>
+        <h2 class="lined-heading"><span>Our Features</span></h2>
       </div>
-      <div class="col-sm-3 bounceIn appear" data-start="0">
-      <div class="box-icon">
-        <div class="circle"><i class="fa fa-glass fa-lg"></i></div>
-        <h3>Beverages included</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse interdum eleifend augue, quis rhoncus purus fermentum. </p>
-        <a href="#">Read more<i class="fa fa-angle-right"></i></a> </div>
+
+      <?php
+      $q = $pdo->prepare("SELECT * FROM feature ORDER BY feature_id ASC");
+      $q->execute();
+      $res = $q->fetchAll();
+      foreach ($res as $row) {
+      ?>
+        <div class="col-sm-3 bounceIn appear" data-start="0">
+          <div class="box-icon">
+            <div class="circle"><i class="fa <?php echo $row['feature_icon']; ?> fa-lg"></i></div>
+            <h3><?php echo $row['feature_title']; ?></h3>
+            <p>
+              <?php echo nl2br($row['feature_text']); ?>
+            </p>
+          </div>
         </div>
-      <div class="col-sm-3 bounceIn appear" data-start="400">
-      <div class="box-icon">
-        <div class="circle"><i class="fa fa-credit-card fa-lg"></i></div>
-        <h3>Stay First, Pay After!</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse interdum eleifend augue, quis rhoncus purus fermentum. </p>
-        <a href="#">Read more<i class="fa fa-angle-right"></i></a> </div>
-        </div>
-      <div class="col-sm-3 bounceIn appear" data-start="800">
-      <div class="box-icon">      
-        <div class="circle"><i class="fa fa-cutlery fa-lg"></i></div>
-        <h3>24 Hour Restaurant</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse interdum eleifend augue, quis rhoncus purus fermentum. </p>
-        <a href="#">Read more<i class="fa fa-angle-right"></i></a> </div>
-        </div>
-      <div class="col-sm-3 bounceIn appear" data-start="1200">
-      <div class="box-icon">
-        <div class="circle"><i class="fa fa-tint fa-lg"></i></div>
-        <h3>Spa Included!</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse interdum eleifend augue, quis rhoncus purus fermentum. </p>
-        <a href="#">Read more<i class="fa fa-angle-right"></i></a> </div>
-    </div>
+      <?php
+      }
+      ?>
     </div>
   </div>
 </section>
 
 <!-- Parallax Effect -->
-<script type="text/javascript">$(document).ready(function(){$('#parallax-image').parallax("50%", -0.35);});</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#parallax-image').parallax("50%", -0.35);
+  });
+</script>
 
 <section class="parallax-effect mt100">
   <div id="parallax-image" style="background-image: url(images/parallax/parallax-01.jpg);">
@@ -312,8 +289,9 @@
         <div class="content">
           <h3 class="text-center"><i class="fa fa fa-star-o"></i> STARHOTEL</h3>
           <p class="text-center">An Exceptional Hotel Template!
-		  <br>
-		  <a href="blog.html" class="btn btn-default btn-lg mt30">Checkout the blog</a></p>
+            <br>
+            <a href="blog.html" class="btn btn-default btn-lg mt30">Checkout the blog</a>
+          </p>
         </div>
       </div>
     </div>
@@ -338,7 +316,7 @@
 </section>
 
 <div class="container">
-  <div class="row"> 
+  <div class="row">
     <!-- Testimonials -->
     <section class="testimonials mt100">
       <div class="col-md-6">
@@ -375,7 +353,7 @@
         </div>
       </div>
     </section>
-    
+
     <!-- About -->
     <section class="about mt100">
       <div class="col-md-6">
@@ -400,4 +378,4 @@
   </div>
 </div>
 
-<?php require_once('footer.php');  ?>
+<?php require_once('footer.php'); ?>
