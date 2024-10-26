@@ -2,6 +2,7 @@
 ob_start();
 session_start();
 require_once('db.php');
+require_once('functions.php');
 $error_message = '';
 $success_message = '';
 ?>
@@ -36,6 +37,9 @@ $success_message = '';
 
 	<!-- Custom Fonts -->
 	<link href="assets/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	<!-- Ckeditor  -->
+	<script src="https://cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script>
 
 </head>
 
@@ -123,6 +127,20 @@ $success_message = '';
 							<ul class="nav nav-second-level">
 								<li><a href="feature_add.php">Add Feature</a></li>
 								<li><a href="feature_view.php">View Features</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#"><i class="fa fa-files-o fa-fw"></i> Testimonials<span class="fa arrow"></span></a>
+							<ul class="nav nav-second-level">
+								<li><a href="testimonial_add.php">Add Testimonial</a></li>
+								<li><a href="testimonial_view.php">View Testimonials</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#"><i class="fa fa-files-o fa-fw"></i> Service<span class="fa arrow"></span></a>
+							<ul class="nav nav-second-level">
+								<li><a href="service_add.php">Add Service</a></li>
+								<li><a href="service_view.php">View Services</a></li>
 							</ul>
 						</li>
 					</ul>
