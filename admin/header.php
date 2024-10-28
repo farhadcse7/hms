@@ -5,8 +5,54 @@ require_once('db.php');
 require_once('functions.php');
 $error_message = '';
 $success_message = '';
-?>
 
+if (!isset($_SESSION['user'])) {
+	header('location: login.php');
+	exit;
+}
+
+
+if ($_SESSION['user']['role_id'] != 1 && $_SESSION['user']['role_id'] != 2):
+
+	$q = $pdo->prepare("
+			SELECT * 
+			FROM role_access t1
+			JOIN pages t2
+			ON t1.page_id = t2.page_id
+			WHERE t1.role_id=?
+		");
+	$q->execute([
+		$_SESSION['user']['role_id']
+	]);
+	$res = $q->fetchAll();
+
+	$page_names = array();
+	foreach ($res as $row) {
+		if ($row['access_status'] == 1) {
+			$page_names[] = $row['page_name'];
+		}
+	}
+
+	$cur_page = substr($_SERVER["SCRIPT_NAME"], strrpos($_SERVER["SCRIPT_NAME"], "/") + 1);
+
+	if ($cur_page == 'feature_view.php' || $cur_page == 'feature_edit.php') {
+		if (in_array('feature_view.php', $page_names) || in_array('feature_edit.php', $page_names)) {
+		} else {
+			header('location: logout.php');
+			exit;
+		}
+	}
+
+/* only giving user based access for pages -use it when need. */
+// if (!in_array($cur_page, $page_names)) {
+// 	header('location: logout.php');
+// 	exit;
+// }
+
+endif;
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,7 +84,6 @@ $success_message = '';
 	<!-- Custom Fonts -->
 	<link href="assets/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
-	<!-- Ckeditor  -->
 	<script src="https://cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script>
 
 </head>
@@ -61,7 +106,9 @@ $success_message = '';
 			<!-- /.navbar-header -->
 
 			<ul class="nav navbar-top-links navbar-right">
-
+				<li>
+					Logged in as <?php echo $_SESSION['user']['user_full_name']; ?>
+				</li>
 				<li class="dropdown">
 					<a class="dropdown-toggle" data-toggle="dropdown" href="#">
 						<i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
@@ -82,67 +129,118 @@ $success_message = '';
 				<div class="sidebar-nav navbar-collapse">
 					<ul class="nav" id="side-menu">
 
-						<li><a href="index.php"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
+						<!-- for developer and admin access -->
+						<?php if ($_SESSION['user']['role_id'] == 1 || $_SESSION['user']['role_id'] == 2): ?>
+							<li><a href="index.php"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
+							<li>
+								<a href="#"><i class="fa fa-files-o fa-fw"></i> Sliders<span class="fa arrow"></span></a>
+								<ul class="nav nav-second-level">
+									<li><a href="slider_add.php">Add Slider</a></li>
 
-						<!--					<li><a href="table.php"><i class="fa fa-table fa-fw"></i> Tables</a></li>-->
-						<!--					<li><a href="form.php"><i class="fa fa-edit fa-fw"></i> Forms</a></li>-->
-						<!--					<li><a href="tab.php"><i class="fa fa-edit fa-fw"></i> Tab</a></li>-->
-						<!--					<li>-->
-						<!--						<a href=-->
-						<!--						   <a href="#">Second Level Item</a>-->
-						<!--						"#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>-->
-						<!--						<ul class="nav nav-second-level">-->
-						<!--							<li></li>-->
-						<!--							<li>-->
-						<!--								<a href="#">Second Level Item</a>-->
-						<!--							</li>-->
-						<!--							<li>-->
-						<!--								<a href="#">Third Level <span class="fa arrow"></span></a>-->
-						<!--								<ul class="nav nav-third-level">-->
-						<!--									<li>-->
-						<!--										<a href="#">Third Level Item</a>-->
-						<!--									</li>-->
-						<!--									<li>-->
-						<!--										<a href="#">Third Level Item</a>-->
-						<!--									</li>-->
-						<!--									<li>-->
-						<!--										<a href="#">Third Level Item</a>-->
-						<!--									</li>-->
-						<!--									<li>-->
-						<!--										<a href="#">Third Level Item</a>-->
-						<!--									</li>-->
-						<!--								</ul>-->
-						<!--							</li>-->
-						<!--						</ul>-->
-						<!--					</li>-->
-						<li>
-							<a href="#"><i class="fa fa-files-o fa-fw"></i>Slider<span class="fa arrow"></span></a>
-							<ul class="nav nav-second-level">
-								<li><a href="slider_add.php">Add Slider</a></li>
-								<li><a href="slider_view.php">View Sliders</a></li>
-							</ul>
-						</li>
-						<li>
-							<a href="#"><i class="fa fa-files-o fa-fw"></i> Features<span class="fa arrow"></span></a>
-							<ul class="nav nav-second-level">
-								<li><a href="feature_add.php">Add Feature</a></li>
-								<li><a href="feature_view.php">View Features</a></li>
-							</ul>
-						</li>
-						<li>
-							<a href="#"><i class="fa fa-files-o fa-fw"></i> Testimonials<span class="fa arrow"></span></a>
-							<ul class="nav nav-second-level">
-								<li><a href="testimonial_add.php">Add Testimonial</a></li>
-								<li><a href="testimonial_view.php">View Testimonials</a></li>
-							</ul>
-						</li>
-						<li>
-							<a href="#"><i class="fa fa-files-o fa-fw"></i> Service<span class="fa arrow"></span></a>
-							<ul class="nav nav-second-level">
-								<li><a href="service_add.php">Add Service</a></li>
-								<li><a href="service_view.php">View Services</a></li>
-							</ul>
-						</li>
+									<li><a href="slider_view.php">View Sliders</a></li>
+								</ul>
+							</li>
+							<li>
+								<a href="#"><i class="fa fa-files-o fa-fw"></i> Features<span class="fa arrow"></span></a>
+								<ul class="nav nav-second-level">
+									<li><a href="feature_add.php">Add Feature</a></li>
+									<li><a href="feature_view.php">View Features</a></li>
+								</ul>
+							</li>
+							<li>
+								<a href="#"><i class="fa fa-files-o fa-fw"></i> Testimonials<span class="fa arrow"></span></a>
+								<ul class="nav nav-second-level">
+									<li><a href="testimonial_add.php">Add Testimonial</a></li>
+									<li><a href="testimonial_view.php">View Testimonials</a></li>
+								</ul>
+							</li>
+							<li>
+								<a href="#"><i class="fa fa-files-o fa-fw"></i> Service<span class="fa arrow"></span></a>
+								<ul class="nav nav-second-level">
+									<li><a href="service_add.php">Add Service</a></li>
+									<li><a href="service_view.php">View Services</a></li>
+								</ul>
+							</li>
+						<?php endif; ?>
+
+						<!-- for other access -->
+						<?php if ($_SESSION['user']['role_id'] != 1 && $_SESSION['user']['role_id'] != 2): ?>
+
+							<?php if (in_array('index.php', $page_names)): ?>
+								<li><a href="index.php"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
+							<?php endif; ?>
+
+							<?php if (in_array('slider_add.php', $page_names) || in_array('slider_view.php', $page_names)): ?>
+								<li>
+									<a href="#"><i class="fa fa-files-o fa-fw"></i> Sliders<span class="fa arrow"></span></a>
+									<ul class="nav nav-second-level">
+
+										<?php if (in_array('slider_add.php', $page_names)): ?>
+											<li><a href="slider_add.php">Add Slider</a></li>
+										<?php endif; ?>
+
+										<?php if (in_array('slider_view.php', $page_names)): ?>
+											<li><a href="slider_view.php">View Sliders</a></li>
+										<?php endif; ?>
+									</ul>
+								</li>
+							<?php endif; ?>
+
+							<?php if (in_array('feature_add.php', $page_names) || in_array('feature_view.php', $page_names)): ?>
+								<li>
+									<a href="#"><i class="fa fa-files-o fa-fw"></i> Features<span class="fa arrow"></span></a>
+									<ul class="nav nav-second-level">
+
+										<?php if (in_array('feature_add.php', $page_names)): ?>
+											<li><a href="feature_add.php">Add Feature</a></li>
+										<?php endif; ?>
+
+										<?php if (in_array('feature_view.php', $page_names) || in_array('feature_edit.php', $page_names) || in_array('feature_delete.php', $page_names)): ?>
+											<li><a href="feature_view.php">View Features</a></li>
+										<?php endif; ?>
+
+									</ul>
+								</li>
+							<?php endif; ?>
+
+							<li>
+								<a href="#"><i class="fa fa-files-o fa-fw"></i> Testimonials<span class="fa arrow"></span></a>
+								<ul class="nav nav-second-level">
+									<li><a href="testimonial_add.php">Add Testimonial</a></li>
+									<li><a href="testimonial_view.php">View Testimonials</a></li>
+								</ul>
+							</li>
+							<li>
+								<a href="#"><i class="fa fa-files-o fa-fw"></i> Service<span class="fa arrow"></span></a>
+								<ul class="nav nav-second-level">
+									<li><a href="service_add.php">Add Service</a></li>
+									<li><a href="service_view.php">View Services</a></li>
+								</ul>
+							</li>
+						<?php endif; ?>
+
+						<!-- for developer access only -->
+						<?php if ($_SESSION['user']['role_id'] == 1): ?>
+							<li>
+								<a href="#"><i class="fa fa-files-o fa-fw"></i> Role Settings<span class="fa arrow"></span></a>
+								<ul class="nav nav-second-level">
+									<li><a href="role_add.php">Add Role</a></li>
+									<li><a href="role_view.php">View Roles</a></li>
+								</ul>
+							</li>
+						<?php endif; ?>
+
+						<!-- for developer and admin access -->
+						<?php if ($_SESSION['user']['role_id'] == 1 || $_SESSION['user']['role_id'] == 2): ?>
+							<li>
+								<a href="#"><i class="fa fa-files-o fa-fw"></i> User Settings<span class="fa arrow"></span></a>
+								<ul class="nav nav-second-level">
+									<li><a href="user_add.php">Add User</a></li>
+									<li><a href="user_view.php">View Users</a></li>
+								</ul>
+							</li>
+						<?php endif; ?>
+
 					</ul>
 				</div>
 				<!-- /.sidebar-collapse -->
