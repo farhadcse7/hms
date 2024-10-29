@@ -1,3 +1,13 @@
 .modal{
     z-index: 9999 !important;
 }
+
+/* gallery image section  */
+.isotope-item img {
+	height: 150px;
+	object-fit: cover;
+}
+#owl-gallery .item img {
+	height: 270px;
+	object-fit: cover;	
+}

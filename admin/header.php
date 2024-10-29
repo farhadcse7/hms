@@ -161,6 +161,15 @@ endif;
 									<li><a href="service_view.php">View Services</a></li>
 								</ul>
 							</li>
+							<li>
+								<a href="#"><i class="fa fa-files-o fa-fw"></i> Gallery<span class="fa arrow"></span></a>
+								<ul class="nav nav-second-level">
+									<li><a href="photo_category_add.php">Add Photo Category</a></li>
+									<li><a href="photo_category_view.php">View Photo Categories</a></li>
+									<li><a href="photo_add.php">Add Photo</a></li>
+									<li><a href="photo_view.php">View Photos</a></li>
+								</ul>
+							</li>
 						<?php endif; ?>
 
 						<!-- for other access -->
@@ -217,6 +226,7 @@ endif;
 									<li><a href="service_view.php">View Services</a></li>
 								</ul>
 							</li>
+
 						<?php endif; ?>
 
 						<!-- for developer access only -->
