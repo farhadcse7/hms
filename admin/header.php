@@ -84,6 +84,11 @@ endif;
 	<!-- Custom Fonts -->
 	<link href="assets/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
+	<!-- select2  -->
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+	<!-- jquery date picker  -->
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<!-- CKeditor  -->
 	<script src="https://cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script>
 
 </head>
@@ -168,6 +173,15 @@ endif;
 									<li><a href="photo_category_view.php">View Photo Categories</a></li>
 									<li><a href="photo_add.php">Add Photo</a></li>
 									<li><a href="photo_view.php">View Photos</a></li>
+								</ul>
+							</li>
+							<li>
+								<a href="#"><i class="fa fa-files-o fa-fw"></i> Blog / Post<span class="fa arrow"></span></a>
+								<ul class="nav nav-second-level">
+									<li><a href="category_add.php">Add Category</a></li>
+									<li><a href="category_view.php">View Categories</a></li>
+									<li><a href="post_add.php">Add Post</a></li>
+									<li><a href="post_view.php">View Posts</a></li>
 								</ul>
 							</li>
 						<?php endif; ?>
