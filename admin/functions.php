@@ -42,3 +42,23 @@ function image_handler($source_image, $destination, $tn_w = 100, $tn_h = 100, $q
     }
     return false;
 }
+
+
+// for frontend blog 
+function month_number_to_detail($month)
+{
+    if($month == '01') {$final_month = 'Jan';}
+    elseif($month == '02') {$final_month = 'Feb';}
+    elseif($month == '03') {$final_month = 'Mar';}
+    elseif($month == '04') {$final_month = 'Apr';}
+    elseif($month == '05') {$final_month = 'May';}
+    elseif($month == '06') {$final_month = 'Jun';}
+    elseif($month == '07') {$final_month = 'Jul';}
+    elseif($month == '08') {$final_month = 'Aug';}
+    elseif($month == '09') {$final_month = 'Sep';}
+    elseif($month == '10') {$final_month = 'Oct';}
+    elseif($month == '11') {$final_month = 'Nov';}
+    elseif($month == '12') {$final_month = 'Dec';}
+
+    return $final_month;
+}

@@ -2,6 +2,7 @@
 ob_start();
 session_start();
 require_once('admin/db.php');
+require_once('admin/functions.php');
 ?>
 
 <!DOCTYPE HTML>
