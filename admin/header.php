@@ -182,6 +182,8 @@ endif;
 									<li><a href="category_view.php">View Categories</a></li>
 									<li><a href="post_add.php">Add Post</a></li>
 									<li><a href="post_view.php">View Posts</a></li>
+									<li><a href="all_comments.php">Comments</a></li>
+									<li><a href="all_replies.php">Replies</a></li>
 								</ul>
 							</li>
 						<?php endif; ?>

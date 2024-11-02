@@ -1,6 +1,6 @@
 <?php
 // ini_set('error_reporting', E_ALL);
-// date_default_timezone_set('Asia/Dhaka');
+date_default_timezone_set('Asia/Dhaka');
 $dbhost = 'localhost';
 $dbname = 'hms';
 $dbuser = 'root';

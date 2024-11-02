@@ -1,12 +1,78 @@
 <?php require_once('header.php'); ?>
 
 <?php
+$error_message = '';
+$success_message = '';
+?>
+
+<?php
 if (!isset($_REQUEST['id'])) {
   header('location: index.php');
   exit;
 }
 ?>
 
+<?php
+
+if (isset($_POST['form1'])) {
+
+  $valid = 1;
+
+  if ($_POST['person_name'] == '') {
+    $valid = 0;
+    $error_message .= 'Name can not be empty\n';
+  }
+  if ($_POST['person_comment'] == '') {
+    $valid = 0;
+    $error_message .= 'Comment can not be empty\n';
+  }
+
+  if ($valid == 1) {
+    $date_and_time =  date('M d') . ', ' . date('Y') . ' at ' . date('h:i a');
+
+    if ($_POST['hidden_data'] == '') {
+      $q = $pdo->prepare("INSERT INTO comment (
+          person_comment,
+          person_name,
+          person_email,
+          date_and_time,
+          comment_status,
+          post_id
+        ) 
+        VALUES (?,?,?,?,?,?)");
+      $q->execute([
+        $_POST['person_comment'],
+        $_POST['person_name'],
+        $_POST['person_email'],
+        $date_and_time,
+        'Inactive',
+        $_REQUEST['id']
+      ]);
+      $success_message = 'Comment is posted. It will be live after admin approval.';
+    } else {
+      $aa = explode('#reply', $_POST['hidden_data']);
+      $q = $pdo->prepare("INSERT INTO reply (
+          person_comment,
+          person_name,
+          person_email,
+          date_and_time,
+          reply_status,
+          comment_id
+        ) 
+        VALUES (?,?,?,?,?,?)");
+      $q->execute([
+        $_POST['person_comment'],
+        $_POST['person_name'],
+        $_POST['person_email'],
+        $date_and_time,
+        'Inactive',
+        $aa[1]
+      ]);
+      $success_message = 'Reply is posted. It will be live after admin approval.';
+    }
+  }
+}
+?>
 
 <?php
 $q = $pdo->prepare("
@@ -75,6 +141,23 @@ $q->execute([
     <!-- Blog -->
     <section class="blog mt50">
       <div class="col-md-9">
+
+        <?php
+        if ($error_message) {
+        ?>
+          <script>
+            alert('<?php echo $error_message; ?>');
+          </script>
+        <?php
+        }
+        if ($success_message) {
+        ?>
+          <script>
+            alert('<?php echo $success_message; ?>');
+          </script>
+        <?php
+        }
+        ?>
         <!-- Article -->
         <article>
           <div style="overflow: hidden;"><img src="uploads/<?php echo $post_photo; ?>" alt="image" class="img-responsive zoom-img"></div>
@@ -86,7 +169,6 @@ $q->execute([
               <h2><?php echo $post_title; ?></h2>
 
               <span class="meta-author"><i class="fa fa-user"></i><a href="author.php?id=<?php echo $user_id; ?>"><?php echo $user_full_name; ?></a></span>
-              <!-- category show section  -->
               <span class="meta-category"><i class="fa fa-pencil"></i>
 
                 <?php
@@ -122,7 +204,6 @@ $q->execute([
             <div class="col-md-12">
               <?php echo $post_description; ?>
             </div>
-            <!-- tag show section  -->
             <div class="col-md-12">
               <b>Tags:</b> <br>
               <?php
@@ -161,76 +242,103 @@ $q->execute([
           <p>Proin venenatis, diam in iaculis venenatis, ante lacus dictum dolor, sed laoreet nisl dui vel magna. Cras pulvinar tortor quis dolor viverra vel scelerisque magna suscipit. Maecenas nec placerat augue. Cras feugiat imperdiet nulla ut feugiat. Vestibulum nunc enim, consequat ac euismod vel, commodo eget nulla. Donec augue est, consectetur posuere dapibus non, aliquam tempor ligula. Suspendisse potenti. Cras vel vestibulum dolor L.orem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sed turpis neque. In auctor, odio eget luctus lobortis!</p>
         </section>
 
+        <?php
+        //fetch comments data from db
+        $q = $pdo->prepare("SELECT * FROM comment WHERE post_id=? AND comment_status=? ORDER BY comment_id ASC");
+        $q->execute([$_REQUEST['id'], 'Active']);
+        $total_comment = $q->rowCount();
+        ?>
+
         <!-- Blog: Comments -->
         <section class="comments mt50">
           <div class="blog-comments">
-            <h2 class="lined-heading"><span><i class="fa fa-comments"></i>3 Comments</span></h2>
+            <h2 class="lined-heading"><span><i class="fa fa-comments"></i><?php echo $total_comment; ?> Comments</span></h2>
           </div>
-          <!-- Comment 1 -->
-          <div class="comment"> <a href="#">
-              <div class="reply-button"> Reply </div>
-            </a>
-            <div class="avatar"> <img src="images/blog/comment-01.jpg" alt="comment-01" class="img-circle" /> </div>
-            <div class="comment-text">
-              <div class="author">
-                <div class="name">Grandpa</div>
-                <div class="date">Apr 30, 2013 at 3:20 pm</div>
-              </div>
-              <div class="text">
-                <p>Proin venenatis, diam in iaculis venenatis, ante lacus dictum dolor, sed laoreet nisl dui vel magna. Cras pulvinar tortor quis dolor viverra vel scelerisque magna suscipit. </p>
-              </div>
-            </div>
-          </div>
-          <!-- Comment 2(Reply) -->
-          <div class="reply-line"></div>
-          <div class="reply">
-            <div class="comment"> <a href="#">
+
+          <?php
+          $res = $q->fetchAll();
+          foreach ($res as $row) {
+          ?>
+            <!-- main comment show  start-->
+            <div class="comment">
+              <a href="#reply<?php echo $row['comment_id']; ?>" class="take-value">
                 <div class="reply-button"> Reply </div>
               </a>
-              <div class="avatar"> <img src="images/blog/comment-02.jpg" alt="comment-02" class="img-circle" /> </div>
+              <div class="avatar">
+                <?php
+                $gravatar_link = 'http://www.gravatar.com/avatar/' . md5($row['person_email']) . '?s=32';
+                echo '<img src="' . $gravatar_link . '" class="img-circle">';
+                ?>
+              </div>
               <div class="comment-text">
                 <div class="author">
-                  <div class="name">Hoo Lang</div>
-                  <div class="date">Apr 30, 2013 at 3:45 pm</div>
+                  <div class="name"><?php echo $row['person_name']; ?></div>
+                  <div class="date"><?php echo $row['date_and_time']; ?></div>
                 </div>
                 <div class="text">
-                  <p>Proin venenatis, diam in iaculis venenatis, ante lacus dictum dolor, sed laoreet nisl dui vel magna. Cras pulvinar tortor quis dolor viverra vel scelerisque magna suscipit. </p>
+                  <p>
+                    <?php echo nl2br($row['person_comment']); ?>
+                  </p>
                 </div>
               </div>
             </div>
-          </div>
-          <!-- Comment 3 -->
-          <div class="comment"> <a href="#">
-              <div class="reply-button"> Reply </div>
-            </a>
-            <div class="avatar"> <img src="images/blog/comment-03.jpg" alt="comment-03" class="img-circle" /> </div>
-            <div class="comment-text">
-              <div class="author">
-                <div class="name">Gigi Adriano</div>
-                <div class="date">Apr 30, 2013 at 3:50 pm</div>
+            <!-- main comment show  end-->
+
+            <!-- reply show  start-->
+            <?php
+            $r = $pdo->prepare("SELECT * FROM reply WHERE comment_id=? AND reply_status=? ORDER BY reply_id ASC");
+            $r->execute([$row['comment_id'], 'Active']);
+            $res1 = $r->fetchAll();
+            foreach ($res1 as $row1) {
+            ?>
+              <div class="reply-line"></div>
+              <div class="reply">
+                <div class="comment">
+                  <div class="avatar">
+                    <?php
+                    $gravatar_link = 'http://www.gravatar.com/avatar/' . md5($row1['person_email']) . '?s=32';
+                    echo '<img src="' . $gravatar_link . '" class="img-circle">';
+                    ?>
+                  </div>
+                  <div class="comment-text">
+                    <div class="author">
+                      <div class="name"><?php echo $row1['person_name']; ?></div>
+                      <div class="date"><?php echo $row1['date_and_time']; ?></div>
+                    </div>
+                    <div class="text">
+                      <p><?php echo nl2br($row1['person_comment']); ?></p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="text">
-                <p>Proin venenatis, diam in iaculis venenatis, ante lacus dictum dolor, sed laoreet nisl dui vel magna. Cras pulvinar tortor quis dolor viverra vel scelerisque magna suscipit. </p>
-              </div>
-            </div>
-          </div>
+            <?php
+            }
+            ?>
+
+          <?php
+          }
+          ?>
+          <!-- reply show  end-->
+
           <!-- Leave comment -->
+          <div id="come_here"></div>
           <div class="mt50">
             <h3><i class="fa fa-comment"></i> Leave a comment</h3>
-            <form role="form" class="mt30">
-              <div class="form-group">
-                <label for="email">Your Email address</label>
-                <input type="email" class="form-control" id="email" placeholder="Enter email">
-              </div>
+            <form action="" role="form" class="mt30" method="post">
+              <input type="hidden" name="hidden_data" value="" id="abc">
               <div class="form-group">
                 <label for="name"><span class="required">*</span> Your Name</label>
-                <input type="text" class="form-control" id="name" placeholder="Enter name">
+                <input type="text" class="form-control" name="person_name">
+              </div>
+              <div class="form-group">
+                <label for="email">Your Email address</label>
+                <input type="email" class="form-control" name="person_email">
               </div>
               <div class="form-group">
                 <label for="comment"><span class="required">*</span> Your comment</label>
-                <textarea name="comment" rows="9" id="comment" class="form-control"></textarea>
+                <textarea name="person_comment" rows="9" class="form-control"></textarea>
               </div>
-              <button type="submit" class="btn btn-default btn-lg">Post comment</button>
+              <button type="submit" class="btn btn-default btn-lg" name="form1">Post comment</button>
             </form>
           </div>
         </section>
@@ -243,10 +351,20 @@ $q->execute([
       <div class="col-md-3">
         <?php require_once('sidebar.php'); ?>
       </div>
-
     </aside>
   </div>
 </div>
 
+<script>
+  (function($) {
+
+    $('.take-value').on('click', function() {
+      var temp = $(this).attr('href');
+      $('#abc').val(temp);
+      window.location.href = "#come_here";
+    });
+
+  })(jQuery);
+</script>
 
 <?php require_once('footer.php'); ?>
