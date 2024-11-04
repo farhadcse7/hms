@@ -11,3 +11,9 @@
 	height: 270px;
 	object-fit: cover;	
 }
+
+/* rooms photo gallery image slider  */
+.standard-slider.room-slider img {
+	object-fit: cover;
+	height: 480px;
+}

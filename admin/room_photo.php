@@ -56,9 +56,19 @@ if (isset($_POST['form1'])) {
 }
 ?>
 
+<?php
+$q = $pdo->prepare("SELECT * FROM room WHERE room_id=?");
+$q->execute([$_REQUEST['id']]);
+$res = $q->fetchAll();
+foreach ($res as $row) {
+    $room_name = $row['room_name'];
+}
+?>
+
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">Add Room Photo</h1>
+        <h1 class="page-header">Add Room Photo for <?php echo $room_name; ?></h1>
+        <a href="room_view.php" class="btn btn-primary btn-sm" style="margin-bottom:10px;">back to previous</a>
     </div>
 </div>
 

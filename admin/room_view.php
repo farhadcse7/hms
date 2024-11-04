@@ -17,6 +17,7 @@
                             <th>Photo</th>
                             <th>Name</th>
                             <th>Type</th>
+                            <th>Price</th>
                             <th>Manage Photos</th>
                             <th>Action</th>
                         </tr>
@@ -43,6 +44,7 @@
                                 </td>
                                 <td><?php echo $row['room_name']; ?></td>
                                 <td><?php echo $row['room_type_name']; ?></td>
+                                <td>$<?php echo $row['room_price']; ?></td>
                                 <td>
                                     <a href="room_photo.php?id=<?php echo $row['room_id']; ?>" class="btn btn-primary btn-xs">Manage Photos</a>
                                 </td>
