@@ -10,24 +10,17 @@ if (!isset($_SESSION['customer'])) {
 <?php
 if (isset($_POST['form1'])) {
   $q = $pdo->prepare("UPDATE customer SET 
-        cust_name=?, 
-        cust_phone=?, 
-        cust_email=? 
-  
+        cust_password =?  
         WHERE cust_id=?
       ");
   $q->execute([
-    $_POST['cust_name'],
-    $_POST['cust_phone'],
-    $_POST['cust_email'],
+    md5($_POST['cust_password']),
     $_SESSION['customer']['cust_id']
   ]);
 
-  $_SESSION['customer']['cust_name'] = $_POST['cust_name'];
-  $_SESSION['customer']['cust_phone'] = $_POST['cust_phone'];
-  $_SESSION['customer']['cust_email'] = $_POST['cust_email'];
+  $_SESSION['customer']['cust_password'] = md5($_POST['cust_password']);
 
-  $success_message = 'Profile information is updated successfully.';
+  $success_message = 'Profile password is updated successfully.';
 }
 ?>
 
@@ -75,6 +68,7 @@ if (isset($_POST['form1'])) {
     <section id="contact-form" class="mt50">
       <div class="col-md-9">
 
+
         <?php
         if ($error_message) {
         ?><script>
@@ -93,24 +87,16 @@ if (isset($_POST['form1'])) {
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="name"><span class="required">*</span> Name</label>
-                <input name="cust_name" type="text" class="form-control" value="<?php echo $_SESSION['customer']['cust_name']; ?>">
+                <label for="name"><span class="required">*</span> Password</label>
+                <input name="cust_password" type="password" class="form-control" value="">
               </div>
             </div>
           </div>
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="name"> Phone Number</label>
-                <input name="cust_phone" type="text" class="form-control" value="<?php echo $_SESSION['customer']['cust_phone']; ?>">
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="name"><span class="required">*</span> Email Address</label>
-                <input name="cust_email" type="text" class="form-control" value="<?php echo $_SESSION['customer']['cust_email']; ?>">
+                <label for="name"><span class="required">*</span> Retype Password</label>
+                <input name="cust_re_password" type="password" class="form-control" value="">
               </div>
             </div>
           </div>
