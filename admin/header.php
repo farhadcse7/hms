@@ -186,6 +186,17 @@ endif;
 									<li><a href="all_replies.php">Replies</a></li>
 								</ul>
 							</li>
+							<li>
+								<a href="#"><i class="fa fa-files-o fa-fw"></i> Hotel Room<span class="fa arrow"></span></a>
+								<ul class="nav nav-second-level">
+									<li><a href="room_type_add.php">Add Room Type</a></li>
+									<li><a href="room_type_view.php">View Room Types</a></li>
+									<li><a href="room_feature_add.php">Add Room Feature</a></li>
+									<li><a href="room_feature_view.php">View Room Features</a></li>
+									<li><a href="room_add.php">Add Room</a></li>
+									<li><a href="room_view.php">View Rooms</a></li>
+								</ul>
+							</li>
 						<?php endif; ?>
 
 						<!-- for other access -->
