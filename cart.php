@@ -194,7 +194,7 @@ if (isset($_POST['form_update'])) {
 
               <input type="submit" value="Update Cart" class="btn btn-primary" name="form_update">
           </form>
-          <a href="" class="btn btn-primary">Checkout</a>
+          <a href="checkout.php" class="btn btn-primary">Checkout</a>
       </div>
 
     <?php endif; ?>

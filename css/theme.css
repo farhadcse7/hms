@@ -2091,3 +2091,24 @@ border: 1px solid;
 #map img {
 	max-width: none !important;
 }
+
+/* my custom codes starts from here */
+.modal{
+    z-index: 9999 !important;
+}
+
+/* gallery image section  */
+.isotope-item img {
+	height: 150px;
+	object-fit: cover;
+}
+#owl-gallery .item img {
+	height: 270px;
+	object-fit: cover;	
+}
+
+/* rooms photo gallery image slider  */
+.standard-slider.room-slider img {
+	object-fit: cover;
+	height: 480px;
+}
