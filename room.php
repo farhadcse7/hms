@@ -8,6 +8,120 @@ if (!isset($_REQUEST['id'])) {
 ?>
 
 <?php
+if (isset($_POST['form1'])) {
+  $valid = 1;
+  if ($_POST['checkin'] == '' || $_POST['checkout'] == '' || $_POST['qty'] == '') {
+    $valid = 0;
+    $error_message .= 'You must have to fill up all the fields.';
+  } else {
+    if (strtotime($_POST['checkin']) >= strtotime($_POST['checkout'])) {
+      $valid = 0;
+      $error_message .= 'Checkin date must be previous date of checkout date';
+    }
+  }
+
+  if ($valid == 1) {
+
+
+    if (isset($_SESSION['cart_room_id'])) {
+
+      $arr_room_id = array();
+      $i = 0;
+      foreach ($_SESSION['cart_room_id'] as $val) {
+        $i++;
+        $arr_room_id[$i] = $val;
+      }
+
+      $arr_qty = array();
+      $i = 0;
+      foreach ($_SESSION['cart_qty'] as $val) {
+        $i++;
+        $arr_qty[$i] = $val;
+      }
+
+      $arr_room_name = array();
+      $i = 0;
+      foreach ($_SESSION['cart_room_name'] as $val) {
+        $i++;
+        $arr_room_name[$i] = $val;
+      }
+
+      $arr_room_price = array();
+      $i = 0;
+      foreach ($_SESSION['cart_room_price'] as $val) {
+        $i++;
+        $arr_room_price[$i] = $val;
+      }
+
+      $arr_room_type_name = array();
+      $i = 0;
+      foreach ($_SESSION['cart_room_type_name'] as $val) {
+        $i++;
+        $arr_room_type_name[$i] = $val;
+      }
+
+      $arr_checkin_date = array();
+      $i = 0;
+      foreach ($_SESSION['cart_checkin_date'] as $val) {
+        $i++;
+        $arr_checkin_date[$i] = $val;
+      }
+
+      $arr_checkin_date_value = array();
+      $i = 0;
+      foreach ($_SESSION['cart_checkin_date_value'] as $val) {
+        $i++;
+        $arr_checkin_date_value[$i] = $val;
+      }
+
+      $arr_checkout_date = array();
+      $i = 0;
+      foreach ($_SESSION['cart_checkout_date'] as $val) {
+        $i++;
+        $arr_checkout_date[$i] = $val;
+      }
+
+      $arr_checkout_date_value = array();
+      $i = 0;
+      foreach ($_SESSION['cart_checkout_date_value'] as $val) {
+        $i++;
+        $arr_checkout_date_value[$i] = $val;
+      }
+
+      if (in_array($_REQUEST['id'], $arr_room_id)) {
+        $valid = 0;
+        $error_message .= 'This room is already added to the cart';
+      } else {
+        $new_key = $i + 1;
+        $_SESSION['cart_room_id'][$new_key] = $_REQUEST['id'];
+        $_SESSION['cart_qty'][$new_key] = $_POST['qty'];
+        $_SESSION['cart_room_name'][$new_key] = $_POST['room_name'];
+        $_SESSION['cart_room_price'][$new_key] = $_POST['room_price'];
+        $_SESSION['cart_room_type_name'][$new_key] = $_POST['room_type_name'];
+        $_SESSION['cart_checkin_date'][$new_key] = $_POST['checkin'];
+        $_SESSION['cart_checkin_date_value'][$new_key] = strtotime($_POST['checkin']);
+        $_SESSION['cart_checkout_date'][$new_key] = $_POST['checkout'];
+        $_SESSION['cart_checkout_date_value'][$new_key] = strtotime($_POST['checkout']);
+      }
+    } else {
+      $_SESSION['cart_room_id'][1] = $_REQUEST['id'];
+      $_SESSION['cart_qty'][1] = $_POST['qty'];
+      $_SESSION['cart_room_name'][1] = $_POST['room_name'];
+      $_SESSION['cart_room_price'][1] = $_POST['room_price'];
+      $_SESSION['cart_room_type_name'][1] = $_POST['room_type_name'];
+      $_SESSION['cart_checkin_date'][1] = $_POST['checkin'];
+      $_SESSION['cart_checkin_date_value'][1] = strtotime($_POST['checkin']);
+      $_SESSION['cart_checkout_date'][1] = $_POST['checkout'];
+      $_SESSION['cart_checkout_date_value'][1] = strtotime($_POST['checkout']);
+    }
+
+    header('location: cart.php');
+    exit;
+  }
+}
+?>
+
+<?php
 //here join relation use for room_type_name
 $q = $pdo->prepare("SELECT * 
                 FROM room t1
@@ -27,6 +141,20 @@ foreach ($res as $row) {
   $room_type_name = $row['room_type_name'];
 }
 ?>
+
+<?php
+if ($error_message) {
+?><script>
+    alert('<?php echo $error_message; ?>');
+  </script><?php
+          }
+
+          if ($success_message) {
+            ?><script>
+    alert('<?php echo $success_message; ?>');
+  </script><?php
+          }
+            ?>
 
 <!-- Parallax Effect -->
 <script type="text/javascript">
@@ -91,23 +219,18 @@ foreach ($res as $row) {
     <!-- Reservation form -->
     <section id="reservation-form" class="mt50 clearfix">
       <div class="col-sm-12 col-md-4">
-        <form class="reservation-vertical clearfix" role="form" method="post" action="https://www.slashdown.net/starhotel-html/php/reservation.php" name="reservationform" id="reservationform">
+        <form class="reservation-vertical clearfix" role="form" method="post" action="">
+
+          <input type="hidden" name="room_name" value="<?php echo $room_name; ?>">
+          <input type="hidden" name="room_price" value="<?php echo $room_price; ?>">
+          <input type="hidden" name="room_type_name" value="<?php echo $room_type_name; ?>">
+
           <h2 class="lined-heading"><span>Reservation</span></h2>
           <div class="price">
             <h4><?php echo $room_type_name; ?></h4>
             $ <?php echo $room_price; ?>,-<span> a night</span>
           </div>
-          <div id="message"></div>
-          <!-- Error message display -->
-          <div class="form-group">
-            <label for="email" accesskey="E">E-mail</label>
-            <input name="email" type="text" id="email" value="" class="form-control" placeholder="Please enter your E-mail" />
-          </div>
-          <div class="form-group">
-            <select class="hidden" name="room" id="room">
-              <option selected="selected">Double Room</option>
-            </select>
-          </div>
+
           <div class="form-group">
             <label for="checkin">Check-in</label>
             <div class="popover-icon" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="right" data-content="Check-In is from 11:00"> <i class="fa fa-info-circle fa-lg"> </i> </div>
@@ -121,35 +244,10 @@ foreach ($res as $row) {
             <input name="checkout" type="text" id="checkout" value="" class="form-control" placeholder="Check-out" />
           </div>
           <div class="form-group">
-            <div class="guests-select">
-              <label>Guests</label>
-              <i class="fa fa-user infield"></i>
-              <div class="total form-control" id="test">1</div>
-              <div class="guests">
-                <div class="form-group adults">
-                  <label for="adults">Adults</label>
-                  <div class="popover-icon" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="right" data-content="+18 years"> <i class="fa fa-info-circle fa-lg"> </i> </div>
-                  <select name="adults" id="adults" class="form-control">
-                    <option value="1">1 adult</option>
-                    <option value="2">2 adults</option>
-                    <option value="3">3 adults</option>
-                  </select>
-                </div>
-                <div class="form-group children">
-                  <label for="children">Children</label>
-                  <div class="popover-icon" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="right" data-content="0 till 18 years"> <i class="fa fa-info-circle fa-lg"> </i> </div>
-                  <select name="children" id="children" class="form-control">
-                    <option value="0">0 children</option>
-                    <option value="1">1 child</option>
-                    <option value="2">2 children</option>
-                    <option value="3">3 children</option>
-                  </select>
-                </div>
-                <button type="button" class="btn btn-default button-save btn-block">Save</button>
-              </div>
-            </div>
+            <label for="checkout">How many rooms</label>
+            <input name="qty" type="number" value="1" class="form-control" min="1" max="5">
           </div>
-          <button type="submit" class="btn btn-primary btn-block">Book Now</button>
+          <button type="submit" class="btn btn-primary btn-block" name="form1">Book Now</button>
         </form>
       </div>
     </section>

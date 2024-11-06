@@ -35,6 +35,11 @@ if (isset($_POST['form1'])) {
         $error_message .= 'Room Price can not be empty<br>';
     }
 
+    if ($_POST['room_total'] == '') {
+        $valid = 0;
+        $error_message .= 'Room Total can not be empty<br>';
+    }
+
     if ($valid == 1) {
 
         $q = $pdo->prepare("UPDATE room SET 
@@ -44,6 +49,7 @@ if (isset($_POST['form1'])) {
                 room_overview=?,
                 room_facility=?,
                 room_price=?,
+                room_total=?,
                 room_type_id=?
                 WHERE room_id=?
             ");
@@ -54,6 +60,7 @@ if (isset($_POST['form1'])) {
             $_POST['room_overview'],
             $_POST['room_facility'],
             $_POST['room_price'],
+            $_POST['room_total'],
             $_POST['room_type_id'],
             $_REQUEST['id']
         ]);
@@ -145,6 +152,7 @@ foreach ($res as $row) {
     $room_overview = $row['room_overview'];
     $room_facility = $row['room_facility'];
     $room_price = $row['room_price'];
+    $room_total = $row['room_total'];
     $room_type_id = $row['room_type_id'];
 }
 ?>
@@ -222,6 +230,12 @@ foreach ($res as $row) {
                                 <label for="" class="col-sm-2 control-label">Room Price *</label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control" name="room_price" value="<?php echo $room_price; ?>">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="col-sm-2 control-label">Room Total *</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="room_total" value="<?php echo $room_total; ?>">
                                 </div>
                             </div>
                             <div class="form-group">

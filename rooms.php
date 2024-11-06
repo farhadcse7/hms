@@ -134,7 +134,7 @@
                                     <!-- features side by decoration rules ends here -->
                                 </div>
                                 <a href="room.php?id=<?php echo $row['room_id']; ?>" class="btn btn-primary btn-block">View Details</a>
-                                <a href="" class="btn btn-primary btn-block">Book Now</a>
+                                <a href="room.php?id=<?php echo $row['room_id']; ?>" class="btn btn-primary btn-block">Book Now</a>
                                 <!-- <a href="room-detail.html" class="btn btn-primary btn-block">Add To Cart</a> -->
                             </div>
                         </div>

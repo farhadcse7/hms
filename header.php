@@ -142,6 +142,8 @@ $success_message = '';
               <li><a href="c-dashboard.php">Dashboard</a></li>
             <?php endif; ?>
 
+            <li><a href="cart.php">View Cart</a></li>
+
           </ul>
         </div>
       </div>

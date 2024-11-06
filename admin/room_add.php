@@ -35,6 +35,11 @@ if (isset($_POST['form1'])) {
         $error_message .= 'Room Price can not be empty<br>';
     }
 
+    if ($_POST['room_total'] == '') {
+        $valid = 0;
+        $error_message .= 'Room Total can not be empty<br>';
+    }
+
     $path = $_FILES['room_featured_photo']['name'];
     $path_tmp = $_FILES['room_featured_photo']['tmp_name'];
 
@@ -79,9 +84,10 @@ if (isset($_POST['form1'])) {
                         room_overview,
                         room_facility,
                         room_price,
+                        room_total,
                         room_type_id
-                    ) VALUES (?,?,?,?,?,?,?,?)");
-        $q->execute([$_POST['room_name'], $_POST['room_short_description'], $_POST['room_description'], $final_name, $_POST['room_overview'], $_POST['room_facility'], $_POST['room_price'], $_POST['room_type_id']]);
+                    ) VALUES (?,?,?,?,?,?,?,?,?)");
+        $q->execute([$_POST['room_name'], $_POST['room_short_description'], $_POST['room_description'], $final_name, $_POST['room_overview'], $_POST['room_facility'], $_POST['room_price'], $_POST['room_total'], $_POST['room_type_id']]);
 
 
         if (isset($_POST['room_feature_ids'])) {
@@ -174,6 +180,12 @@ if (isset($_POST['form1'])) {
                                 <label for="" class="col-sm-2 control-label">Room Price *</label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control" name="room_price">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="col-sm-2 control-label">Room Total *</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="room_total">
                                 </div>
                             </div>
                             <div class="form-group">

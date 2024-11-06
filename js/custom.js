@@ -336,13 +336,13 @@ jQuery(document).ready(function () {
     if (jQuery().datepicker) {
         jQuery('#checkin').datepicker({
             showAnim: "drop",
-            dateFormat: "dd/mm/yy",
+            dateFormat: "yy-mm-dd",
             minDate: "-0D",
         });
 
         jQuery('#checkout').datepicker({
             showAnim: "drop",
-            dateFormat: "dd/mm/yy",
+            dateFormat: "yy-mm-dd",
             minDate: "-0D",
             beforeShow: function () {
                 var a = jQuery("#checkin").datepicker('getDate');
