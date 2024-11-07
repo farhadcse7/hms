@@ -116,6 +116,7 @@ if (isset($_POST['payment']) && $_POST['payment'] == 'posted' && floatval($_POST
         {
             $statement = $pdo->prepare("INSERT INTO payment_detail (
                             room_id,
+                            cust_id,
                             checkin_date,
                             checkin_date_value,
                             checkout_date,
@@ -124,9 +125,10 @@ if (isset($_POST['payment']) && $_POST['payment'] == 'posted' && floatval($_POST
                             qty, 
                             payment_id
                             ) 
-                            VALUES (?,?,?,?,?,?,?,?)");
+                            VALUES (?,?,?,?,?,?,?,?,?)");
             $sql = $statement->execute(array(
                             $arr_room_id[$i],
+                            $_SESSION['customer']['cust_id'],
                             $arr_checkin_date[$i],
                             $arr_checkin_date_value[$i],
                             $arr_checkout_date[$i],

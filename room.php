@@ -8,6 +8,14 @@ if (!isset($_REQUEST['id'])) {
 ?>
 
 <?php
+//total room count as per room_id from room table
+$q = $pdo->prepare("SELECT * FROM room WHERE room_id=?");
+$q->execute([$_REQUEST['id']]);
+$res = $q->fetchAll();
+foreach ($res as $row) {
+  $room_total = $row['room_total'];
+}
+
 if (isset($_POST['form1'])) {
   $valid = 1;
   if ($_POST['checkin'] == '' || $_POST['checkout'] == '' || $_POST['qty'] == '') {
@@ -17,6 +25,29 @@ if (isset($_POST['form1'])) {
     if (strtotime($_POST['checkin']) >= strtotime($_POST['checkout'])) {
       $valid = 0;
       $error_message .= 'Checkin date must be previous date of checkout date';
+    } else {
+      $err = 0;
+      $q = $pdo->prepare("SELECT * FROM payment_detail WHERE room_id=?");
+      $q->execute([$_REQUEST['id']]);
+      $res = $q->fetchAll();
+      foreach ($res as $row) {
+        if ((strtotime($_POST['checkin']) >= $row['checkin_date_value']) && (strtotime($_POST['checkin']) <= $row['checkout_date_value'])) {
+          $err += $row['qty'];
+        } elseif ((strtotime($_POST['checkout']) >= $row['checkin_date_value']) && (strtotime($_POST['checkout']) <= $row['checkout_date_value'])) {
+          $err += $row['qty'];
+        }
+      }
+      if ($_POST['qty'] > $room_total) {
+        $valid = 0;
+        $error_message .= 'Number of rooms exceed the total room limit. You can book only ' . $room_total . ' rooms';
+      } else {
+        if ($err + $_POST['qty'] > $room_total) {
+          //echo $err + $_POST['qty'];
+          //exit;
+          $valid = 0;
+          $error_message .= 'No such room available on that date';
+        }
+      }
     }
   }
 
@@ -230,6 +261,23 @@ if ($error_message) {
             <h4><?php echo $room_type_name; ?></h4>
             $ <?php echo $room_price; ?>,-<span> a night</span>
           </div>
+
+          <!-- <h4>This room is booked for the following date(s):</h4> -->
+          <!-- use comment when this section when finally done project start-->
+          <?php
+          $q = $pdo->prepare("SELECT * FROM payment_detail WHERE room_id=?");
+          $q->execute([$_REQUEST['id']]);
+          $res = $q->fetchAll();
+          foreach ($res as $row) {
+            if ($row['checkout_date_value'] < strtotime(date('Y-m-d'))) {
+              continue;
+            }
+            echo 'Checkin: ' . $row['checkin_date'] . ' and ';
+            echo 'Checkout: ' . $row['checkout_date'];
+            echo '<br><br>';
+          }
+          ?>
+          <!-- use comment when this section when finally done project end-->
 
           <div class="form-group">
             <label for="checkin">Check-in</label>
