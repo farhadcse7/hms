@@ -1,25 +1,19 @@
 <?php
 ob_start();
 session_start();
-require_once('../../admin/inc/config.php');
+include("../../admin/db.php");
 
 $error_message = '';
 
-$statement = $pdo->prepare("SELECT * FROM tbl_setting_payment WHERE id=1");
-$statement->execute();
-$result = $statement->fetchAll(PDO::FETCH_ASSOC);
-foreach ($result as $row) {
-	$paypal_email = $row['paypal_email'];
-}
+$paypal_email = 'sb-iagha33876344@business.example.com';
 
-$return_url = 'payment_success.php';
-$cancel_url = 'payment.php';
-$notify_url = 'payment/paypal/verify_process.php';
+$return_url = SITE_URL.'payment_success.php';
+$cancel_url = SITE_URL.'index.php';
+$notify_url = SITE_URL.'payment/paypal/verify_process.php';
 
-$item_name = 'Product Item(s)';
+$item_name = 'Hotel Rooms';
 $item_amount = $_POST['final_total'];
 $item_number = time();
-
 $payment_date = date('Y-m-d H:i:s');
 
 // Check if paypal request or response
@@ -50,151 +44,128 @@ if (!isset($_POST["txn_id"]) && !isset($_POST["txn_type"])){
 	// Append querystring with custom field
 	//$querystring .= "&custom=".USERID;
 
-	$statement = $pdo->prepare("INSERT INTO tbl_payment (
-						customer_id,
-						customer_name,
-						customer_email,
-						customer_phone,
-						payment_date,
-						txnid, 
-						paid_amount,
-						card_number,
-                        card_cvv,
-                        card_month,
-                        card_year,
-                        bank_transaction_info,
-                        payment_method,
-						payment_status,
-						shipping_status,
-						payment_id
-						) 
-						VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-	$sql = $statement->execute(array(
-						$_SESSION['customer']['cust_id'],
-						$_SESSION['customer']['cust_name'],
-						$_SESSION['customer']['cust_email'],
-						$_SESSION['customer']['cust_phone'],
-						$payment_date,
-						'',
-						$item_amount,
-						'',
-						'',
-						'',
-						'',
-						'',
-						'PayPal',
-						'Pending',
-						'Pending',
-						$item_number
-					));
+	$statement = $pdo->prepare("INSERT INTO payment (   
+                                cust_id,
+                                cust_name,
+                                cust_email,
+                                txnid, 
+                                payment_date,
+                                payment_method,
+                                paid_amount,
+                                card_number,
+                                card_cvv,
+                                card_month,
+                                card_year,                                
+                                payment_status,
+                                payment_id
+                            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+    $statement->execute(array(
+                            $_SESSION['customer']['cust_id'],
+                            $_SESSION['customer']['cust_name'],
+                            $_SESSION['customer']['cust_email'],
+                            '',
+                            $payment_date,
+                            'PayPal',
+                            $item_amount,
+                            '', 
+                            '', 
+                            '', 
+                            '',
+                            'Pending',
+                            $item_number
+                        ));	
 
 	$i=0;
-    foreach($_SESSION['cart_p_id'] as $key => $value) 
+        foreach($_SESSION['cart_room_id'] as $value) 
+        {
+            $i++;
+            $arr_room_id[$i] = $value;
+        }
+
+        $i=0;
+        foreach($_SESSION['cart_checkin_date'] as $value) 
+        {
+            $i++;
+            $arr_checkin_date[$i] = $value;
+        }
+
+        $i=0;
+        foreach($_SESSION['cart_checkin_date_value'] as $value) 
+        {
+            $i++;
+            $arr_checkin_date_value[$i] = $value;
+        }
+
+        $i=0;
+        foreach($_SESSION['cart_checkout_date'] as $value) 
+        {
+            $i++;
+            $arr_checkout_date[$i] = $value;
+        }
+
+        $i=0;
+        foreach($_SESSION['cart_checkout_date_value'] as $value) 
+        {
+            $i++;
+            $arr_checkout_date_value[$i] = $value;
+        }
+
+        $i=0;
+        foreach($_SESSION['cart_room_price'] as $value) 
+        {
+            $i++;
+            $arr_room_price[$i] = $value;
+        }
+
+        $i=0;
+        foreach($_SESSION['cart_qty'] as $value) 
+        {
+            $i++;
+            $arr_qty[$i] = $value;
+        }
+
+
+    for($i=1;$i<=count($arr_room_id);$i++) 
     {
-        $i++;
-        $arr_cart_p_id[$i] = $value;
-    }
-
-	$i=0;
-    foreach($_SESSION['cart_p_name'] as $key => $value) 
-    {
-        $i++;
-        $arr_cart_p_name[$i] = $value;
-    }
-
-    $i=0;
-    foreach($_SESSION['cart_size_name'] as $key => $value) 
-    {
-        $i++;
-        $arr_cart_size_name[$i] = $value;
-    }
-
-   	$i=0;
-    foreach($_SESSION['cart_color_name'] as $key => $value) 
-    {
-        $i++;
-        $arr_cart_color_name[$i] = $value;
-    }
-
-    $i=0;
-    foreach($_SESSION['cart_p_qty'] as $key => $value) 
-    {
-        $i++;
-        $arr_cart_p_qty[$i] = $value;
-    }
-
-    $i=0;
-    foreach($_SESSION['cart_p_current_price'] as $key => $value) 
-    {
-        $i++;
-        $arr_cart_p_current_price[$i] = $value;
-    }
-
-
-    $i=0;
-    $statement = $pdo->prepare("SELECT * FROM tbl_product");
-    $statement->execute();
-    $result = $statement->fetchAll(PDO::FETCH_ASSOC);							
-    foreach ($result as $row) {
-    	$i++;
-    	$arr_p_id[$i] = $row['p_id'];
-    	$arr_p_qty[$i] = $row['p_qty'];
-    }
-
-
-    for($i=1;$i<=count($arr_cart_p_name);$i++) {
-    	$statement = $pdo->prepare("INSERT INTO tbl_order (
-						product_id,
-						product_name,
-						size, 
-						color,
-						quantity, 
-						unit_price, 
-						payment_id
-						) 
-						VALUES (?,?,?,?,?,?,?)");
-		$sql = $statement->execute(array(
-						$arr_cart_p_id[$i],
-						$arr_cart_p_name[$i],
-						$arr_cart_size_name[$i],
-						$arr_cart_color_name[$i],
-						$arr_cart_p_qty[$i],
-						$arr_cart_p_current_price[$i],
-						$item_number
-					));
-
-		// Update the stock
-		for($j=1;$j<=count($arr_p_id);$j++)
-		{
-			if($arr_p_id[$j] == $arr_cart_p_id[$i]) 
-			{
-				$current_qty = $arr_p_qty[$j];
-				break;
-			}
-		}
-		$final_quantity = $current_qty - $arr_cart_p_qty[$i];
-		$statement = $pdo->prepare("UPDATE tbl_product SET p_qty=? WHERE p_id=?");
-		$statement->execute(array($final_quantity,$arr_cart_p_id[$i]));
-
-    }
-
-	
-
+        $statement = $pdo->prepare("INSERT INTO payment_detail (
+                        room_id,
+                        cust_id,
+                        checkin_date,
+                        checkin_date_value,
+                        checkout_date,
+                        checkout_date_value,
+                        room_price, 
+                        qty, 
+                        payment_id
+                        ) 
+                        VALUES (?,?,?,?,?,?,?,?,?)");
+        $sql = $statement->execute(array(
+                        $arr_room_id[$i],
+                        $_SESSION['customer']['cust_id'],
+                        $arr_checkin_date[$i],
+                        $arr_checkin_date_value[$i],
+                        $arr_checkout_date[$i],
+                        $arr_checkout_date_value[$i],
+                        $arr_room_price[$i],
+                        $arr_qty[$i],
+                        $item_number
+                    ));
+    }    
     
-    unset($_SESSION['cart_p_id']);
-	unset($_SESSION['cart_size_id']);
-	unset($_SESSION['cart_size_name']);
-	unset($_SESSION['cart_color_id']);
-	unset($_SESSION['cart_color_name']);
-	unset($_SESSION['cart_p_qty']);
-	unset($_SESSION['cart_p_current_price']);
-	unset($_SESSION['cart_p_name']);
-	unset($_SESSION['cart_p_featured_photo']);
+    unset($_SESSION['cart_room_id']);
+    unset($_SESSION['cart_qty']);
+    unset($_SESSION['cart_room_name']);
+    unset($_SESSION['cart_room_price']);
+    unset($_SESSION['cart_room_type_name']);
+    unset($_SESSION['cart_checkin_date']);
+    unset($_SESSION['cart_checkin_date_value']);
+    unset($_SESSION['cart_checkout_date']);
+    unset($_SESSION['cart_checkout_date_value']);
 
 	
 	if($sql){
 		// Redirect to paypal IPN
-		header('location:https://www.paypal.com/cgi-bin/webscr'.$querystring);
+		header('location:https://www.sandbox.paypal.com/cgi-bin/webscr'.$querystring);
 		exit();
 	}
 	
@@ -226,7 +197,7 @@ if (!isset($_POST["txn_id"]) && !isset($_POST["txn_type"])){
 	$header .= "Content-Type: application/x-www-form-urlencoded\r\n";
 	$header .= "Content-Length: " . strlen($req) . "\r\n\r\n";
 	
-	$fp = fsockopen ('ssl://www.paypal.com', 443, $errno, $errstr, 30);
+	$fp = fsockopen ('ssl://www.sandbox.paypal.com', 443, $errno, $errstr, 30);
 	
 	if (!$fp) {
 		// HTTP ERROR

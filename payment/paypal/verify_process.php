@@ -1,5 +1,5 @@
 <?php
-require_once "../../admin/inc/config.php";
+include("../../admin/db.php");
 
 $raw_post_data = file_get_contents('php://input');
 $raw_post_array = explode('&', $raw_post_data);
@@ -28,7 +28,7 @@ foreach ($myPost as $key => $value) {
  * Post IPN data back to PayPal to validate the IPN data is genuine
  * Without this step anyone can fake IPN data
  */
-$paypalURL = "https://www.paypal.com/cgi-bin/webscr";
+$paypalURL = "https://www.sandbox.paypal.com/cgi-bin/webscr";
 $ch = curl_init($paypalURL);
 if ($ch == FALSE) {
     return FALSE;
@@ -55,7 +55,7 @@ $tokens = explode("\r\n\r\n", trim($res));
 $res = trim(end($tokens));
 if (strcmp($res, "VERIFIED") == 0 || strcasecmp($res, "VERIFIED") == 0) {
 
-    $statement = $pdo->prepare("UPDATE tbl_payment SET 
+    $statement = $pdo->prepare("UPDATE payment SET 
                         txnid=?, 
                         payment_status=?
                         WHERE payment_id=?");
@@ -66,7 +66,10 @@ if (strcmp($res, "VERIFIED") == 0 || strcasecmp($res, "VERIFIED") == 0) {
                     ));
 
 }else{
-    $statement = $pdo->prepare("DELETE FROM tbl_payment WHERE payment_id=?");
+    $statement = $pdo->prepare("DELETE FROM payment WHERE payment_id=?");
+    $sql = $statement->execute(array($_POST['item_number']));
+
+    $statement = $pdo->prepare("DELETE FROM payment_detail WHERE payment_id=?");
     $sql = $statement->execute(array($_POST['item_number']));
 }
 ?>

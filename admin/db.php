@@ -12,3 +12,5 @@ try {
 catch( PDOException $exception ) {
 	echo "Connection error :" . $exception->getMessage();
 }
+
+define('SITE_URL', 'http://localhost/hms/');
