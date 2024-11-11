@@ -100,12 +100,41 @@ foreach ($res as $row) {
             <div class="th-text pull-right">
               <div class="th-item">
                 <div class="btn-group">
-                  <button class="btn btn-default btn-xs dropdown-toggle js-activated" type="button" data-toggle="dropdown"> English <span class="caret"></span> </button>
+
+                  <?php
+                  if (!isset($_SESSION['current_lang_code'])) {
+                    $q = $pdo->prepare("SELECT * FROM language WHERE lang_default=?");
+                    $q->execute(['default']);
+                    $res = $q->fetchAll();
+                    foreach ($res as $row) {
+                      $lang_name = $row['lang_name'];
+                    }
+                    $top_lang_name = $lang_name;
+                  } else {
+                    $q = $pdo->prepare("SELECT * FROM language WHERE lang_code=?");
+                    $q->execute([$_SESSION['current_lang_code']]);
+                    $res = $q->fetchAll();
+                    foreach ($res as $row) {
+                      $lang_name = $row['lang_name'];
+                    }
+                    $top_lang_name = $lang_name;
+                  }
+                  ?>
+
+                  <button class="btn btn-default btn-xs dropdown-toggle js-activated" type="button" data-toggle="dropdown"> <?php echo $top_lang_name; ?> <span class="caret"></span> </button>
                   <ul class="dropdown-menu">
-                    <li> <a href="#">ENGLISH</a> </li>
-                    <li> <a href="#">FRANCE</a> </li>
-                    <li> <a href="#">GERMAN</a> </li>
-                    <li> <a href="#">SPANISH</a> </li>
+                    <?php
+                    $q = $pdo->prepare("SELECT * FROM language ORDER BY lang_id ASC");
+                    $q->execute();
+                    $res = $q->fetchAll();
+                    foreach ($res as $row) {
+                      $cur_page = substr($_SERVER["SCRIPT_NAME"], strrpos($_SERVER["SCRIPT_NAME"], "/") + 1);
+                    ?><li>
+                        <a href="language_change.php?code=<?php echo $row['lang_code']; ?>&page=<?php echo $cur_page; ?>"><?php echo $row['lang_name']; ?></a>
+                      </li>
+                    <?php
+                    }
+                    ?>
                   </ul>
                 </div>
               </div>
