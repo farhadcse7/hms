@@ -11,6 +11,12 @@
         <div class="panel panel-default">
             <div class="panel-body">
 
+                <?php
+                if (isset($_SESSION['d_msg'])) {
+                    echo '<div class="alert alert-success">' . $_SESSION['d_msg'] . '</div>';
+                    unset($_SESSION['d_msg']);
+                }
+                ?>
                 <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                     <thead>
                         <tr>
@@ -24,13 +30,8 @@
                     <tbody>
                         <?php
                         $i = 0;
-                        $q = $pdo->prepare("SELECT * 
-                                FROM feature_language t1
-                                JOIN feature t2
-                                ON t1.feature_id = t2.feature_id
-                                WHERE t1.lang_code = ?
-                                ORDER BY t1.feature_id ASC");
-                        $q->execute(['en']);
+                        $q = $pdo->prepare("SELECT * FROM feature ORDER BY feature_id ASC");
+                        $q->execute();
                         $res = $q->fetchAll();
                         foreach ($res as $row) {
                             $i++;
