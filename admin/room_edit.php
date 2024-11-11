@@ -50,6 +50,7 @@ if (isset($_POST['form1'])) {
                 room_facility=?,
                 room_price=?,
                 room_total=?,
+                room_show_on_home=?,
                 room_type_id=?
                 WHERE room_id=?
             ");
@@ -61,6 +62,7 @@ if (isset($_POST['form1'])) {
             $_POST['room_facility'],
             $_POST['room_price'],
             $_POST['room_total'],
+            $_POST['room_show_on_home'],
             $_POST['room_type_id'],
             $_REQUEST['id']
         ]);
@@ -153,6 +155,7 @@ foreach ($res as $row) {
     $room_facility = $row['room_facility'];
     $room_price = $row['room_price'];
     $room_total = $row['room_total'];
+    $room_show_on_home = $row['room_show_on_home'];
     $room_type_id = $row['room_type_id'];
 }
 ?>
@@ -236,6 +239,19 @@ foreach ($res as $row) {
                                 <label for="" class="col-sm-2 control-label">Room Total *</label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control" name="room_total" value="<?php echo $room_total; ?>">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="col-sm-2 control-label">Room Show on home? *</label>
+                                <div class="col-sm-10">
+                                    <select name="room_show_on_home" class="form-control">
+                                        <option value="No" <?php if ($room_show_on_home == 'No') {
+                                                                echo 'selected';
+                                                            } ?>>No</option>
+                                        <option value="Yes" <?php if ($room_show_on_home == 'Yes') {
+                                                                echo 'selected';
+                                                            } ?>>Yes</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">

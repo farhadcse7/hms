@@ -137,6 +137,7 @@ endif;
 						<!-- for developer and admin access -->
 						<?php if ($_SESSION['user']['role_id'] == 1 || $_SESSION['user']['role_id'] == 2): ?>
 							<li><a href="index.php"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
+							<li><a href="website_settings.php"><i class="fa fa-dashboard fa-fw"></i> Website Settings</a></li>
 							<li>
 								<a href="#"><i class="fa fa-files-o fa-fw"></i> Sliders<span class="fa arrow"></span></a>
 								<ul class="nav nav-second-level">

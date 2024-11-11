@@ -432,3 +432,14 @@ table.dataTable thead .sorting:after {
     border-left-width: 0;
   }
 }
+
+
+/* custom css our's */
+#page-wrapper .tab-content {
+  margin-top: 15px;
+}
+
+#page-wrapper .page-header {
+  font-size: 30px;
+  font-weight: 700;
+}

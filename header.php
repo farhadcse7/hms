@@ -6,6 +6,16 @@ require_once('admin/functions.php');
 $error_message = '';
 $success_message = '';
 ?>
+<?php
+$q = $pdo->prepare("SELECT * FROM settings WHERE id=?");
+$q->execute([1]);
+$res = $q->fetchAll();
+foreach ($res as $row) {
+  $top_bar_email = $row['top_bar_email'];
+  $top_bar_phone = $row['top_bar_phone'];
+  $top_bar_show = $row['top_bar_show'];
+}
+?>
 <!DOCTYPE HTML>
 <html>
 
@@ -76,36 +86,38 @@ $success_message = '';
 <body>
 
   <!-- Top header -->
-  <div id="top-header">
-    <div class="container">
-      <div class="row">
-        <div class="col-xs-6">
-          <div class="th-text pull-left">
-            <div class="th-item"> <a href="#"><i class="fa fa-phone"></i> 05-460789986</a> </div>
-            <div class="th-item"> <a href="#"><i class="fa fa-envelope"></i> MAIL@STARHOTEL.COM </a></div>
-          </div>
-        </div>
-        <div class="col-xs-6">
-          <div class="th-text pull-right">
-            <div class="th-item">
-              <div class="btn-group">
-                <button class="btn btn-default btn-xs dropdown-toggle js-activated" type="button" data-toggle="dropdown"> English <span class="caret"></span> </button>
-                <ul class="dropdown-menu">
-                  <li> <a href="#">ENGLISH</a> </li>
-                  <li> <a href="#">FRANCE</a> </li>
-                  <li> <a href="#">GERMAN</a> </li>
-                  <li> <a href="#">SPANISH</a> </li>
-                </ul>
-              </div>
+  <?php if ($top_bar_show == 'Yes'): ?>
+    <div id="top-header">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-6">
+            <div class="th-text pull-left">
+              <div class="th-item"> <a href="#"><i class="fa fa-phone"></i> <?php echo $top_bar_phone; ?></a> </div>
+              <div class="th-item"> <a href="#"><i class="fa fa-envelope"></i> <?php echo $top_bar_email; ?> </a></div>
             </div>
-            <div class="th-item">
-              <div class="social-icons"> <a href="#"><i class="fa fa-facebook"></i></a> <a href="#"><i class="fa fa-twitter"></i></a> <a href="#"><i class="fa fa-youtube-play"></i></a> </div>
+          </div>
+          <div class="col-xs-6">
+            <div class="th-text pull-right">
+              <div class="th-item">
+                <div class="btn-group">
+                  <button class="btn btn-default btn-xs dropdown-toggle js-activated" type="button" data-toggle="dropdown"> English <span class="caret"></span> </button>
+                  <ul class="dropdown-menu">
+                    <li> <a href="#">ENGLISH</a> </li>
+                    <li> <a href="#">FRANCE</a> </li>
+                    <li> <a href="#">GERMAN</a> </li>
+                    <li> <a href="#">SPANISH</a> </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="th-item">
+                <div class="social-icons"> <a href="#"><i class="fa fa-facebook"></i></a> <a href="#"><i class="fa fa-twitter"></i></a> <a href="#"><i class="fa fa-youtube-play"></i></a> </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  <?php endif; ?>
 
   <!-- Header -->
   <header>
@@ -123,11 +135,11 @@ $success_message = '';
           <ul class="nav navbar-nav">
             <li class="dropdown active"> <a href="index.php">Home</a></li>
             <!-- <li class="dropdown"> <a href="#" data-toggle="dropdown" class="dropdown-toggle js-activated">Rooms<b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="room-list.php">Room List View</a></li>
-                <li><a href="room-detail.php">Room Detail</a></li>
-              </ul>
-            </li> -->
+            <ul class="dropdown-menu">
+              <li><a href="room-list.php">Room List View</a></li>
+              <li><a href="room-detail.php">Room Detail</a></li>
+            </ul>
+          </li> -->
 
             <li><a href="rooms.php">Rooms</a></li>
             <li><a href="blog.php">Blog</a></li>

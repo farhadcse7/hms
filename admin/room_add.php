@@ -85,9 +85,10 @@ if (isset($_POST['form1'])) {
                         room_facility,
                         room_price,
                         room_total,
+                        room_show_on_home,
                         room_type_id
-                    ) VALUES (?,?,?,?,?,?,?,?,?)");
-        $q->execute([$_POST['room_name'], $_POST['room_short_description'], $_POST['room_description'], $final_name, $_POST['room_overview'], $_POST['room_facility'], $_POST['room_price'], $_POST['room_total'], $_POST['room_type_id']]);
+                    ) VALUES (?,?,?,?,?,?,?,?,?,?)");
+        $q->execute([$_POST['room_name'], $_POST['room_short_description'], $_POST['room_description'], $final_name, $_POST['room_overview'], $_POST['room_facility'], $_POST['room_price'], $_POST['room_total'], $_POST['room_show_on_home'], $_POST['room_type_id']]);
 
 
         if (isset($_POST['room_feature_ids'])) {
@@ -186,6 +187,15 @@ if (isset($_POST['form1'])) {
                                 <label for="" class="col-sm-2 control-label">Room Total *</label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control" name="room_total">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="col-sm-2 control-label">Room Show on home? *</label>
+                                <div class="col-sm-10">
+                                    <select name="room_show_on_home" class="form-control">
+                                        <option value="No">No</option>
+                                        <option value="Yes">Yes</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">
