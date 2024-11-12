@@ -11,6 +11,97 @@ foreach ($res as $row) {
   $footer_how_many_post = $row['footer_how_many_post'];
 }
 ?>
+<?php
+if (isset($_POST['form_subscriber'])) {
+  $valid = 1;
+  if ($_POST['s_name'] == '') {
+    $valid = 0;
+    $error_message .= 'Name can not be empty\n';
+  }
+  if ($_POST['s_email'] == '') {
+    $valid = 0;
+    $error_message .= 'Email can not be empty\n';
+  }
+
+  if ($valid == 1) {
+    $hash = md5(time());
+
+    $q = $pdo->prepare("INSERT INTO subscriber (
+        s_name,
+        s_email,
+        s_hash,
+        s_active
+      ) 
+      VALUES (?,?,?,?)");
+    $q->execute([
+      $_POST['s_name'],
+      $_POST['s_email'],
+      $hash,
+      0
+    ]);
+
+    require_once('mail/class.phpmailer.php');
+    $mail = new PHPMailer();
+    $mail->CharSet = 'UTF-8';
+
+    try {
+
+      // $mail->SMTPSecure = "ssl";
+      // $mail->IsSMTP();
+      // $mail->SMTPAuth   = true;
+      // $mail->Host       = 'business32.web-hosting.com';
+      // $mail->Port       = '465';
+      // $mail->Username   = 'usa@commercialcleaningjanitorialserviceslosangeles.com';
+      // $mail->Password   = '63@n6#3)W.G%';
+      // $mail->addReplyTo('noreply@yourwebsite.com');
+      // $mail->setFrom('usa@commercialcleaningjanitorialserviceslosangeles.com');
+      // $mail->addAddress($_POST['s_email']);
+
+      // SMTP configuration
+      $mail->isSMTP();
+      $mail->Host       = 'smtp.gmail.com';
+      $mail->SMTPAuth   = true;
+      $mail->Username   = 'miafm6@gmail.com';
+      $mail->Password   = 'upakmuzjkyztaytz';
+      $mail->SMTPSecure = "tls";
+      $mail->Port       = 587;
+      // Email headers and addresses
+      $mail->setFrom('miafm6@gmail.com', 'HMS');
+      $mail->addReplyTo('noreply@yourwebsite.com');
+      $mail->addAddress($_POST['s_email']);
+
+      $mail->isHTML(true);
+      $mail->Subject = 'Subscription Confirmation';
+
+      // $verify_link = '<a href="' . SITE_URL . 'verify_subscriber.php?email=' . $_POST['s_email'] . '&hash=' . $hash . '">' . SITE_URL . 'verify_subscriber.php?email=' . $_POST['s_email'] . '&hash=' . $hash . '</a>';
+
+      // $mail->Body = 'Please click on the link below to confirm the subscription:' . $verify_link;
+
+      $mail->Body    = '<h2>Please click on the link below to confirm the subscription <a href="localhost/hms/verify_subscriber.php?email=' . $_POST['s_email'] . '&hash=' . $hash . '">click here</a> </h2>';
+
+      $mail->send();
+
+      $success_message = 'Your subscription is completed. Please check your email address to follow the process to confirm the subscription.';
+    } catch (Exception $e) {
+      echo 'Message could not be sent.';
+      echo 'Mailer Error: ' . $mail->ErrorInfo;
+    }
+  }
+}
+?>
+<?php
+if ($error_message) {
+?><script>
+    alert('<?php echo $error_message; ?>');
+  </script><?php
+          }
+
+          if ($success_message) {
+            ?><script>
+    alert('<?php echo $success_message; ?>');
+  </script><?php
+          }
+            ?>
 <footer>
   <div class="container">
     <div class="row">
@@ -24,11 +115,13 @@ foreach ($res as $row) {
       <div class="col-md-3 col-sm-3">
         <h4>Recieve our newsletter</h4>
         <p>Suspendisse sed sollicitudin nisl, at dignissim libero. Sed porta tincidunt ipsum, vel volutpa!</p>
-        <form role="form">
+
+        <form role="form" action="" method="post">
           <div class="form-group">
-            <input name="newsletter" type="text" id="newsletter" value="" class="form-control" placeholder="Please enter your E-mailaddress">
+            <input name="s_name" type="text" value="" class="form-control" placeholder="Full Name">
+            <input name="s_email" type="text" value="" class="form-control" placeholder="Email Address">
           </div>
-          <button type="submit" class="btn btn-lg btn-black btn-block">Submit</button>
+          <button type="submit" class="btn btn-lg btn-black btn-block" name="form_subscriber">Submit</button>
         </form>
       </div>
       <div class="col-md-3 col-sm-3">

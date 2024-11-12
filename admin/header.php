@@ -139,6 +139,8 @@ endif;
 							<li><a href="index.php"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
 							<li><a href="website_settings.php"><i class="fa fa-dashboard fa-fw"></i> Website Settings</a></li>
 
+							<li><a href="email_template.php"><i class="fa fa-dashboard fa-fw"></i> Email Template (Post)</a></li>
+
 							<li>
 								<a href="#"><i class="fa fa-files-o fa-fw"></i> Language<span class="fa arrow"></span></a>
 								<ul class="nav nav-second-level">
@@ -206,6 +208,12 @@ endif;
 									<li><a href="room_feature_view.php">View Room Features</a></li>
 									<li><a href="room_add.php">Add Room</a></li>
 									<li><a href="room_view.php">View Rooms</a></li>
+								</ul>
+							</li>
+							<li>
+								<a href="#"><i class="fa fa-files-o fa-fw"></i> Subscribers<span class="fa arrow"></span></a>
+								<ul class="nav nav-second-level">
+									<li><a href="subscriber_view.php">All Active Subscribers</a></li>
 								</ul>
 							</li>
 						<?php endif; ?>

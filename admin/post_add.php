@@ -103,6 +103,72 @@ if (isset($_POST['form1'])) {
             }
         }
 
+        //send mail when a new post added
+        $q = $pdo->prepare("SELECT * FROM email_template WHERE et_id=?");
+        $q->execute([1]);
+        $res = $q->fetchAll();
+        foreach ($res as $row) {
+            $et_content = $row['et_content'];
+        }
+
+        require_once('../mail/class.phpmailer.php');
+        $mail = new PHPMailer();
+        $mail->CharSet = 'UTF-8';
+
+        try {
+            // $mail->SMTPSecure = "ssl";
+            // $mail->IsSMTP();
+            // $mail->SMTPAuth   = true;
+            // $mail->Host       = 'business32.web-hosting.com';
+            // $mail->Port       = '465';
+            // $mail->Username   = 'usa@commercialcleaningjanitorialserviceslosangeles.com';
+            // $mail->Password   = '63@n6#3)W.G%';
+            // $mail->addReplyTo('noreply@yourwebsite.com');
+            // $mail->setFrom('usa@commercialcleaningjanitorialserviceslosangeles.com');
+
+            // SMTP configuration
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'miafm6@gmail.com';
+            $mail->Password   = 'upakmuzjkyztaytz';
+            $mail->SMTPSecure = "tls";
+            $mail->Port       = 587;
+            // Email headers and addresses
+            $mail->setFrom('miafm6@gmail.com', 'HMS');
+            $mail->addReplyTo('noreply@yourwebsite.com');
+
+            $mail->isHTML(true);
+            $mail->Subject = 'New Post is Added';
+
+            $q = $pdo->prepare("SELECT * FROM subscriber WHERE s_active=?");
+            $q->execute([1]);
+            $res = $q->fetchAll();
+            foreach ($res as $row) {
+
+                $mail2 = clone $mail;
+                $s_name = $row['s_name'];
+                $s_email = $row['s_email'];
+
+                $post_link = '<a href="' . SITE_URL . 'blog-detail.php?id=' . $ai_id . '">Click here</a>';
+
+                // $a_message = '';
+                // $a_message .= 'Hi '.$s_name.',<br>';
+                // $a_message .= 'A new post is added to our website. Please click on the link below:<br>';
+                // $a_message .= $post_link;
+                // $a_message .= '<br>Thank you!<br>ABC Company';
+
+                $a_message = str_replace('{{subscriber_name}}', $s_name, $et_content);
+                $a_message = str_replace('{{post_url}}', $post_link, $a_message);
+
+                $mail2->MsgHTML(nl2br($a_message));
+                $mail2->addAddress($s_email);
+                $mail2->send();
+            }
+        } catch (Exception $e) {
+            echo 'Message could not be sent.';
+            echo 'Mailer Error: ' . $mail->ErrorInfo;
+        }
         $success_message = 'Post is added successfully!';
     }
 }
