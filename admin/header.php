@@ -90,6 +90,8 @@ endif;
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<!-- CKeditor  -->
 	<script src="https://cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script>
+	<!-- <script src="https://cdn.ckeditor.com/4.25.0-lts/standard/ckeditor.js"></script> -->
+	<!-- <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script> -->
 
 </head>
 
